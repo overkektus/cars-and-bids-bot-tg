@@ -47,5 +47,3 @@ export class Bot implements IBot {
     console.log('bot started');
   }
 };
-export { BotContext };
-
