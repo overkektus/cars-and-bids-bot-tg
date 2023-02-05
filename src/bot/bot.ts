@@ -1,9 +1,10 @@
-import { conversations, createConversation } from '@grammyjs/conversations';
-import { Bot as GrammyBot, session } from 'grammy';
+import { conversations } from '@grammyjs/conversations';
+import { Bot as GrammyBot, MemorySessionStorage, session } from 'grammy';
 import { inject, injectable } from 'inversify';
 import { connect } from 'mongoose';
 
 import { AddCommand } from '../commands/add';
+import { CarListCommand } from '../commands/carList';
 import { Command } from '../commands/command';
 import { StartCommand } from '../commands/start';
 import { IConfigService } from '../config/config.interface';
@@ -22,17 +23,19 @@ export class Bot implements IBot {
   ) {
     this.bot = new GrammyBot<BotContext>(config.get('TOKEN'));
     this.bot.use(session({
-      initial() {
-        return {};
-      },
+      storage: new MemorySessionStorage(),
+      initial: () => ({
+        carListMenu: {
+          currentPage: 1
+        }
+      })
     }));
     this.bot.use(conversations());
   }
   
   async init() {
-    this.commands = [new StartCommand(this.bot), new AddCommand(this.bot)];
+    this.commands = [new StartCommand(this.bot), new AddCommand(this.bot), new CarListCommand(this.bot)];
     for (const command of this.commands) {
-      command.conversations.forEach(cmdConversation => this.bot.use(createConversation(cmdConversation)));
       command.handle();
     }
 
