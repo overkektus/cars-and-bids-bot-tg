@@ -29,7 +29,7 @@ export class AddCommand extends Command {
   private async grabCarTitle(carURL: string): Promise<string> {
     const res = await axios.get(carURL);
     let $ = load(res.data);
-    const carTitle = $('title').text();
+    const carTitle = $('title').text().slice(0, $('title').text().indexOf('auction')).trim();
     return carTitle;
   }
   
