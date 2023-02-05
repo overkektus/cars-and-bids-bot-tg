@@ -1,7 +1,7 @@
 import { conversations } from '@grammyjs/conversations';
 import { Bot as GrammyBot, MemorySessionStorage, session } from 'grammy';
 import { inject, injectable } from 'inversify';
-import { connect } from 'mongoose';
+import mongoose from 'mongoose';
 
 import { AddCommand } from '../commands/add';
 import { CarListCommand } from '../commands/carList';
@@ -39,7 +39,8 @@ export class Bot implements IBot {
       command.handle();
     }
 
-    await connect('mongodb://root:example@localhost:27017/');
+    await mongoose.set('strictQuery', true);
+    await mongoose.connect('mongodb://root:example@localhost:27017/');
     console.log('db connected');
 
     this.bot.start();
