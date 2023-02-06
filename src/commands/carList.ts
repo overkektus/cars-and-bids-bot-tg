@@ -58,9 +58,10 @@ export class CarListCommand extends Command {
     this.carListMenu.register(this.carMenu);
     bot.use(this.carListMenu);
     bot.use(createConversation(this.listOfObservableCars.bind(this), 'listOfObservableCars'));
+    bot.hears('🗒️ Show list of cars', this.commandEnter);
   }
 
-  async listOfObservableCars(conversation: BotConversation, ctx: BotContext): Promise<void> {
+  private async listOfObservableCars(conversation: BotConversation, ctx: BotContext): Promise<void> {
     const carList = await carModel.find({ userId: ctx.from?.id });
     if (carList.length === 0) {
       await ctx.reply('No active tracking found. To track the car, start a new /add 🔎');
@@ -69,9 +70,7 @@ export class CarListCommand extends Command {
     }
   }
 
-  handle(): void {
-    this.bot.hears('🗒️ Show list of cars', async ctx => {
-      await ctx.conversation.enter('listOfObservableCars');
-    });
+  async commandEnter(ctx: BotContext): Promise<void> {
+    await ctx.conversation.enter('listOfObservableCars');
   }
 }

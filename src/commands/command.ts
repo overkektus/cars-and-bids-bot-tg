@@ -5,5 +5,5 @@ import { BotContext } from '../bot/bot.context';
 export abstract class Command {
   constructor(public bot: GrammyBot<BotContext>) { }
 
-  abstract handle(): void;
+  abstract commandEnter(ctx: BotContext): void | Promise<void>;
 }

@@ -6,18 +6,18 @@ import { Command } from "./command";
 export class StartCommand extends Command {
   constructor(bot: GrammyBot<BotContext>) {
     super(bot);
+    bot.command('start', this.commandEnter);
   }
 
-  handle(): void {
+  async commandEnter(ctx: BotContext): Promise<void> {
     const keyboard = new Keyboard()
       .text('🚗 Add car to observation').text('🗒️ Show list of cars').row();
-    this.bot.command('start', ctx => {
-      ctx.reply(
-        `Hi, ${ctx.message?.from.first_name}.`,
-        {
-          reply_markup: keyboard
-        }
-      );
-    });
+
+    ctx.reply(
+      `Hi, ${ctx.message?.from.first_name}.`,
+      {
+        reply_markup: keyboard
+      }
+    );
   }
 }

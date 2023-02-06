@@ -12,6 +12,7 @@ export class AddCommand extends Command {
   constructor(bot: GrammyBot<BotContext>) {
     super(bot);
     bot.use(createConversation(this.addNewCarConversation.bind(this), 'addNewCarConversation'));
+    bot.hears('🚗 Add car to observation', this.commandEnter)
   }
 
   async addNewCarConversation(conversation: BotConversation, ctx: BotContext): Promise<void> {
@@ -40,10 +41,8 @@ export class AddCommand extends Command {
     const carTitle = $('title').text().slice(0, $('title').text().indexOf('auction')).trim();
     return carTitle;
   }
-  
-  public handle(): void {
-    this.bot.hears('🚗 Add car to observation', async ctx => {
-      await ctx.conversation.enter('addNewCarConversation');
-    });
+
+  async commandEnter(ctx: BotContext): Promise<void> {
+    await ctx.conversation.enter('addNewCarConversation');
   }
 }
