@@ -26,7 +26,8 @@ export class Bot implements IBot {
       storage: new MemorySessionStorage(),
       initial: () => ({
         carListMenu: {
-          currentPage: 1
+          currentPage: 1,
+          currentCarId: null,
         }
       })
     }));
@@ -39,11 +40,21 @@ export class Bot implements IBot {
       command.handle();
     }
 
-    await mongoose.set('strictQuery', true);
+    this.bot.command("cancel", async (ctx: BotContext) => {
+      await ctx.conversation.exit('addNewCarConversation');
+      await ctx.reply("Leaving.");
+    });
+
+    // await mongoose.set('strictQuery', true);
     await mongoose.connect('mongodb://root:example@localhost:27017/');
     console.log('db connected');
 
     this.bot.start();
     console.log('bot started');
+
+    this.bot.on("callback_query:data", async (ctx) => {
+      console.log("Unknown button event with payload", ctx.callbackQuery.data);
+      await ctx.answerCallbackQuery(); // remove loading animation
+    });
   }
 };

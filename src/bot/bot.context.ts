@@ -4,6 +4,7 @@ import { Context, SessionFlavor } from "grammy";
 export interface SessionData {
   carListMenu: {
     currentPage: number;
+    currentCarId: string | null;
   }
 }
 
