@@ -8,5 +8,12 @@ export interface SessionData {
   }
 }
 
+export const initialSessionState: SessionData = {
+  carListMenu: {
+    currentPage: 1,
+    currentCarId: null,
+  }
+}
+
 export type BotContext = Context & SessionFlavor<SessionData> & ConversationFlavor;
 export type BotConversation = Conversation<BotContext>;
