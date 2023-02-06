@@ -1,6 +1,6 @@
 import { Bot as GrammyBot, Keyboard } from 'grammy';
 
-import { BotContext } from '../bot/bot';
+import { BotContext } from '../bot/bot.context';
 import { Command } from "./command";
 
 export class StartCommand extends Command {
