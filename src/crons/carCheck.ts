@@ -1,10 +1,11 @@
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { ScheduleOptions } from "node-cron";
 
 import { Cron } from "./cron";
 import { TYPES } from '../types';
 import { IConfigService } from "../config/config.interface";
 
+@injectable()
 export class CarCheck extends Cron {
   public cronExpression: string;
   public options: ScheduleOptions;
@@ -16,6 +17,6 @@ export class CarCheck extends Cron {
   }
 
   task(): void {
-    throw new Error("Method not implemented.");
+    console.log('fire');
   }
 }
