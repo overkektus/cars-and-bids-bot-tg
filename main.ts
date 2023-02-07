@@ -1,6 +1,6 @@
-import { IBot } from './src/bot/bot.interface';
+import { IApp } from './src/app.interface';
 import { container } from './src/inversify.config';
 import { TYPES } from './src/types';
 
-const bot = container.get<IBot>(TYPES.Bot);
-bot.init();
+const app = container.get<IApp>(TYPES.App);
+app.launch();

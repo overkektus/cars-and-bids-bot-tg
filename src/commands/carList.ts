@@ -18,6 +18,11 @@ export class CarListCommand extends Command {
     .text('update')
     .text('delete', async (ctx) => {
       await carModel.findByIdAndDelete(ctx.session.carListMenu.currentCarId);
+      const carCount = await carModel.count({ userId: ctx.from?.id });
+      const isLastCarInPage = !(carCount % carPerPage);
+      
+      if (isLastCarInPage && carCount > 0) ctx.session.carListMenu.currentPage--;
+      ctx.menu.update();
       ctx.menu.back();
     });
 
@@ -30,6 +35,7 @@ export class CarListCommand extends Command {
           .submenu(car.carTitle, 'car', (ctx) => ctx.session.carListMenu.currentCarId = car.id)
           .row();
       });
+      // TODO: check if it's not empty
       return range;
     })
     .text("<", async (ctx) => {
@@ -40,12 +46,12 @@ export class CarListCommand extends Command {
     })
     .text(async (ctx) => {
       const carCount = await carModel.count({ userId: ctx.from?.id });
-      const pages = Math.round(carCount / carPerPage);
+      const pages = Math.ceil(carCount / carPerPage);
       return `${ctx.session.carListMenu.currentPage}/${pages}`;
     })
     .text(">", async (ctx) => {
       const carCount = await carModel.count({ userId: ctx.from?.id });
-      const pages = Math.round(carCount / carPerPage);
+      const pages = Math.ceil(carCount / carPerPage);
       if (ctx.session.carListMenu.currentPage !== pages) {
         ctx.session.carListMenu.currentPage++;
         ctx.menu.update();

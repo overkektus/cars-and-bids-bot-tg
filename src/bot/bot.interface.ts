@@ -1,3 +1,3 @@
 export interface IBot {
-  init(): void;
+  start(): void;
 }
