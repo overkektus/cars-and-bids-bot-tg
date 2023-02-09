@@ -3,6 +3,7 @@ const TYPES = {
   Bot: Symbol.for('Bot'),
   Config: Symbol.for('Config'),
   CarCheck: Symbol.for('CarCheck'),
+  RabbitMQ: Symbol.for('RabbitMQ'),
 };
 
 export { TYPES };
