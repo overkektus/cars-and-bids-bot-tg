@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import mongoose from "mongoose";
-import nodeCron from "node-cron";
 
 import { IApp } from "./app.interface";
 import { IBot } from "./bot/bot.interface";

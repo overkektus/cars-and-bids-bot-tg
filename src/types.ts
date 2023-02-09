@@ -4,6 +4,7 @@ const TYPES = {
   Config: Symbol.for('Config'),
   CarCheck: Symbol.for('CarCheck'),
   RabbitMQ: Symbol.for('RabbitMQ'),
+  ConsoleLogger: Symbol.for('ConsoleLogger')
 };
 
 export { TYPES };

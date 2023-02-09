@@ -12,12 +12,15 @@ import { Cron } from "./crons/cron";
 import { CarCheck } from "./crons/carCheck";
 import { IMQ } from "./crons/mq.interface";
 import { RabbitMQ } from "./crons/rabbitMQ";
+import { ILogger } from "./logger/loger.interface";
+import { ConsoleLogger } from "./logger/consoleLogger";
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);
 container.bind<IBot>(TYPES.Bot).to(Bot);
-container.bind<IConfigService>(TYPES.Config).to(ConfigService);
+container.bind<IConfigService>(TYPES.Config).to(ConfigService).inSingletonScope();;
 container.bind<Cron>(TYPES.CarCheck).to(CarCheck);
 container.bind<IMQ>(TYPES.RabbitMQ).to(RabbitMQ).inSingletonScope();
+container.bind<ILogger>(TYPES.ConsoleLogger).to(ConsoleLogger).inSingletonScope();
 
 export { container };
