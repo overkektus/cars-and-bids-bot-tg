@@ -4,7 +4,10 @@ const TYPES = {
   Config: Symbol.for('Config'),
   CarCheck: Symbol.for('CarCheck'),
   RabbitMQ: Symbol.for('RabbitMQ'),
-  ConsoleLogger: Symbol.for('ConsoleLogger')
+  ConsoleLogger: Symbol.for('ConsoleLogger'),
+  AddCommand: Symbol.for('AddCommand'),
+  CarListCommand: Symbol.for('CarListCommand'),
+  StartCommand: Symbol.for('StartCommand')
 };
 
 export { TYPES };

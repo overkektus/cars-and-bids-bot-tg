@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
 import { Menu, MenuRange, } from "@grammyjs/menu";
 import { createConversation } from '@grammyjs/conversations';
@@ -8,6 +9,7 @@ import carModel from '../models/car.model';
 
 const carPerPage: number = 3;
 
+@injectable()
 export class CarListCommand extends Command {
   public carMenu: Menu<BotContext> = new Menu<BotContext>('car')
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
@@ -59,8 +61,11 @@ export class CarListCommand extends Command {
     })
     .row();
 
-  constructor(bot: GrammyBot<BotContext>) {
-    super(bot);
+  constructor() {
+    super();
+  }
+
+  public init(bot: GrammyBot<BotContext>): void {
     this.carListMenu.register(this.carMenu);
     bot.use(this.carListMenu);
     bot.use(createConversation(this.listOfObservableCars.bind(this), 'listOfObservableCars'));

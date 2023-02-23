@@ -1,9 +1,12 @@
+import { injectable } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
 
 import { BotContext } from '../bot/bot.context';
 
+@injectable()
 export abstract class Command {
-  constructor(public bot: GrammyBot<BotContext>) { }
+  constructor() { }
 
+  abstract init(bot: GrammyBot<BotContext>): void;
   abstract commandEnter(ctx: BotContext): void | Promise<void>;
 }

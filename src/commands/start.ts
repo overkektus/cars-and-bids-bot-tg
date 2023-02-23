@@ -1,11 +1,16 @@
+import { injectable } from 'inversify';
 import { Bot as GrammyBot, Keyboard } from 'grammy';
 
 import { BotContext } from '../bot/bot.context';
 import { Command } from "./command";
 
+@injectable()
 export class StartCommand extends Command {
-  constructor(bot: GrammyBot<BotContext>) {
-    super(bot);
+  constructor() {
+    super();
+  }
+
+  public init(bot: GrammyBot<BotContext>): void {
     bot.command('start', this.commandEnter);
   }
 
