@@ -22,3 +22,12 @@ services:
       ME_CONFIG_MONGODB_URL: ${MONGODB_URL}
     env_file:
       .env
+  rabbitMQ:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      .env
+
