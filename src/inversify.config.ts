@@ -10,7 +10,7 @@ import { IApp } from "./app.interface";
 import { Cron } from "./crons/cron";
 import { CarCheck } from "./crons/carCheck";
 import { IMQ } from "./services/mq/mq.interface";
-import { ConsumerMessageType, RabbitMQ } from "./services/mq/rabbitMQ";
+import { ConsumerMessageType, RabbitMQ } from "./services/mq/rabbitMQ.service";
 import { ILogger } from "./services/logger/loger.interface";
 import { ConsoleLogger } from "./services/logger/consoleLogger";
 import { IBot } from "./bot/bot.interface";
@@ -21,7 +21,7 @@ import { AddCommand } from "./bot/commands/add";
 import { CarListCommand } from "./bot/commands/carList";
 import { StartCommand } from "./bot/commands/start";
 import { INotifyService } from "./services/notify/notify.interface";
-import { NotifyService } from "./services/notify/notify";
+import { NotifyService } from "./services/notify/notify.service";
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);

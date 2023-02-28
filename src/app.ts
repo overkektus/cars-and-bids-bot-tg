@@ -9,7 +9,7 @@ import { IConfigService } from "./services/config/config.interface";
 import { NOTIFICATION_QUEUE_NAME } from "./constants";
 import { Cron } from "./crons/cron";
 import { IMQ } from "./services/mq/mq.interface";
-import { ConsumerMessageType } from "./services/mq/rabbitMQ";
+import { ConsumerMessageType } from "./services/mq/rabbitMQ.service";
 import { INotificationMessage } from "./models/car.interface";
 import { TYPES } from "./types";
 import { INotifyService } from "./services/notify/notify.interface";

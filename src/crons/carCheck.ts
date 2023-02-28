@@ -8,7 +8,7 @@ import { IConfigService } from "../services/config/config.interface";
 import { IMQ } from "../services/mq/mq.interface";
 import { CHECK_QUEUE_NAME } from "../constants";
 import carModel from "../models/car.model";
-import { ConsumerMessageType } from "../services/mq/rabbitMQ";
+import { ConsumerMessageType } from "../services/mq/rabbitMQ.service";
 import { INotificationMessage } from "../models/car.interface";
 import { IBot } from "../bot/bot.interface";
 import { BotContext } from "../bot/bot.context";

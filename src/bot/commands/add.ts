@@ -11,7 +11,7 @@ import { Command } from "./command";
 import { IMQ } from '../../services/mq/mq.interface';
 import { TYPES } from '../../types';
 import { INITIAL_QUEUE_NAME } from '../../constants';
-import { ConsumerMessageType } from '../../services/mq/rabbitMQ';
+import { ConsumerMessageType } from '../../services/mq/rabbitMQ.service';
 
 @injectable()
 export class AddCommand extends Command {
