@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Container } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
+import { Connection, ConnectOptions } from "mongoose";
 
 import { TYPES } from './types';
 import { IConfigService } from './services/config/config.interface';
@@ -22,6 +23,8 @@ import { CarListCommand } from "./bot/commands/carList";
 import { StartCommand } from "./bot/commands/start";
 import { INotifyService } from "./services/notify/notify.interface";
 import { NotifyService } from "./services/notify/notify.service";
+import { IDatabaseService } from "./services/db/database.interface";
+import { DatabaseService } from "./services/db/database.service";
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);
@@ -34,5 +37,6 @@ container.bind<Command>(TYPES.AddCommand).to(AddCommand);
 container.bind<Command>(TYPES.CarListCommand).to(CarListCommand);
 container.bind<Command>(TYPES.StartCommand).to(StartCommand);
 container.bind<INotifyService>(TYPES.Notify).to(NotifyService);
+container.bind<IDatabaseService<Connection, ConnectOptions>>(TYPES.Database).to(DatabaseService).inRequestScope();
 
 export { container };

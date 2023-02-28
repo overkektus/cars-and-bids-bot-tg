@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
-import mongoose from "mongoose";
 import { Bot as GrammyBot } from 'grammy';
+import { Connection, ConnectOptions } from "mongoose";
 
 import { IApp } from "./app.interface";
 import { BotContext } from "./bot/bot.context";
@@ -13,6 +13,7 @@ import { ConsumerMessageType } from "./services/mq/rabbitMQ.service";
 import { INotificationMessage } from "./models/car.interface";
 import { TYPES } from "./types";
 import { INotifyService } from "./services/notify/notify.interface";
+import { IDatabaseService } from "./services/db/database.interface";
 
 @injectable()
 export class App implements IApp {
@@ -21,13 +22,12 @@ export class App implements IApp {
     @inject(TYPES.Config) public config: IConfigService,
     @inject(TYPES.CarCheck) public carCheck: Cron,
     @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
+    @inject(TYPES.Database) public dbService: IDatabaseService<Connection, ConnectOptions>,
     @inject(TYPES.Notify) public notifyService: INotifyService,
   ) { }
 
   async launch() {
-    await mongoose.set('strictQuery', true);
-    await mongoose.connect(this.config.get('MONGODB_URI'));
-    console.log('db connected');
+    await this.dbService.connect(this.config.get('MONGODB_URI'));
 
     await this.rabbitMQ.connect(this.config.get('RABBITMQ_URI'));
     this.rabbitMQ.assertQueue(NOTIFICATION_QUEUE_NAME);

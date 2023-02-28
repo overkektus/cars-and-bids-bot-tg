@@ -9,6 +9,7 @@ const TYPES = {
   AddCommand: Symbol.for('AddCommand'),
   CarListCommand: Symbol.for('CarListCommand'),
   StartCommand: Symbol.for('StartCommand'),
+  Database: Symbol.for('Database'),
 };
 
 export { TYPES };
