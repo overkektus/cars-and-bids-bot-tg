@@ -4,13 +4,13 @@ import { conversations } from '@grammyjs/conversations';
 
 import { BotContext, initialSessionState } from './bot.context';
 import { IBot } from './bot.interface';
-import { Command } from '../commands/command';
-import { IConfigService } from '../config/config.interface';
+import { Command } from './commands/command';
+import { IConfigService } from '../services/config/config.interface';
 import { TYPES } from '../types';
 
 @injectable()
-export class Bot implements IBot {
-  bot: GrammyBot<BotContext>;
+export class Bot implements IBot<GrammyBot<BotContext>> {
+  public bot: GrammyBot<BotContext>;
   commands: Command[];
 
   constructor(

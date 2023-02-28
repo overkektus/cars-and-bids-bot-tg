@@ -5,17 +5,18 @@ import { createConversation } from '@grammyjs/conversations';
 import axios from 'axios';
 import { load } from 'cheerio';
 
-import { BotContext, BotConversation } from "../bot/bot.context";
-import carModel from '../models/car.model';
+import { BotContext, BotConversation } from "../bot.context";
+import carModel from '../../models/car.model';
 import { Command } from "./command";
-import { IMQ } from '../crons/mq.interface';
-import { TYPES } from '../types';
-import { INITIAL_QUEUE_NAME } from '../constants';
+import { IMQ } from '../../services/mq/mq.interface';
+import { TYPES } from '../../types';
+import { INITIAL_QUEUE_NAME } from '../../constants';
+import { ConsumerMessageType } from '../../services/mq/rabbitMQ';
 
 @injectable()
 export class AddCommand extends Command {
   constructor(
-    @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ
+    @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>
   ) {
     super();
   }
@@ -23,6 +24,7 @@ export class AddCommand extends Command {
   public init(bot: GrammyBot<BotContext>): void {
     bot.use(createConversation(this.addNewCarConversation.bind(this), 'addNewCarConversation'));
     bot.hears('🚗 Add car to observation', this.commandEnter);
+    bot.command('add', this.commandEnter);
   }
 
   private async addNewCarConversation(conversation: BotConversation, ctx: BotContext): Promise<void> {
@@ -39,9 +41,8 @@ export class AddCommand extends Command {
         await ctx.reply('Already exist. Send another URL');
       }
     } while(isDublicate);
-
     const carTitle = await this.grabCarTitle(carURL);
-    this.rabbitMQ.sendData(INITIAL_QUEUE_NAME, carURL);
+    this.rabbitMQ.sendData<String>(INITIAL_QUEUE_NAME, carURL);
     await carModel.create({ url: carURL, userId, carTitle });
     ctx.reply(`${carTitle} was succesfully added to list.✅`);
   }

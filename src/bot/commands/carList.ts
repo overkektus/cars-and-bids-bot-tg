@@ -3,9 +3,9 @@ import { Bot as GrammyBot } from 'grammy';
 import { Menu, MenuRange, } from "@grammyjs/menu";
 import { createConversation } from '@grammyjs/conversations';
 
-import { BotContext, BotConversation } from "../bot/bot.context";
+import { BotContext, BotConversation } from "../bot.context";
 import { Command } from "./command";
-import carModel from '../models/car.model';
+import carModel from '../../models/car.model';
 
 const carPerPage: number = 3;
 
@@ -70,6 +70,7 @@ export class CarListCommand extends Command {
     bot.use(this.carListMenu);
     bot.use(createConversation(this.listOfObservableCars.bind(this), 'listOfObservableCars'));
     bot.hears('🗒️ Show list of cars', this.commandEnter);
+    bot.command('list', this.commandEnter);
   }
 
   private async listOfObservableCars(conversation: BotConversation, ctx: BotContext): Promise<void> {

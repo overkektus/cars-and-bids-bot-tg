@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
 
-import { BotContext } from '../bot/bot.context';
+import { BotContext } from '../bot.context';
 
 @injectable()
 export abstract class Command {

@@ -1,3 +1,4 @@
-export interface IBot {
+export interface IBot<B> {
+  bot: B;
   start(): void;
 }
