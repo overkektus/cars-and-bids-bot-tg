@@ -31,7 +31,6 @@ export class App implements IApp {
 
     await this.rabbitMQ.connect(this.config.get('RABBITMQ_URI'));
     this.rabbitMQ.assertQueue(NOTIFICATION_QUEUE_NAME);
-    console.log('rabbitMQ connected');
 
     this.carCheck.init();
     this.bot.start();

@@ -8,21 +8,31 @@ export class DatabaseService implements IDatabaseService<ConnectOptions, Connect
   private connection!: Connection;
 
   async connect(uri: string, options?: ConnectOptions): Promise<Connection> {
-    if (this.connection) {
+    try {
+      if (this.connection) {
+        return this.connection;
+      }
+
+      this.connection = await createConnection(uri, options) as Connection;
+
+      console.log('Connected to MongoDB');
+
       return this.connection;
+    } catch(error) {
+      console.error('Error connecting to MongoDB:', error);
+      throw error;
     }
-
-    this.connection = await createConnection(uri, options) as Connection;
-
-    console.log('Connected to MongoDB');
-
-    return this.connection;
   }
 
   async disconnect(): Promise<void> {
-    if (this.connection) {
-      await this.connection.close();
-      console.log('Disconnected from MongoDB');
+    try {
+      if (this.connection) {
+        await this.connection.close();
+        console.log('Disconnected from MongoDB');
+      }
+    } catch(error) {
+      console.error('Error disconnecting from MongoDB:', error);
+      throw error;
     }
   }
 }
