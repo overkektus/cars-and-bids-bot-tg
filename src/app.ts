@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { Bot as GrammyBot } from 'grammy';
-import { Connection, ConnectOptions } from "mongoose";
+import { Connection, ConnectOptions, Model, model } from "mongoose";
 
 import { IApp } from "./app.interface";
 import { BotContext } from "./bot/bot.context";
@@ -10,7 +10,7 @@ import { NOTIFICATION_QUEUE_NAME } from "./constants";
 import { Cron } from "./crons/cron";
 import { IMQ } from "./services/mq/mq.interface";
 import { ConsumerMessageType } from "./services/mq/rabbitMQ.service";
-import { INotificationMessage } from "./models/car.interface";
+import { ICar, INotificationMessage } from "./models/car.interface";
 import { TYPES } from "./types";
 import { INotifyService } from "./services/notify/notify.interface";
 import { IDatabaseService } from "./services/db/database.interface";
@@ -32,7 +32,7 @@ export class App implements IApp {
     await this.rabbitMQ.connect(this.config.get('RABBITMQ_URI'));
     this.rabbitMQ.assertQueue(NOTIFICATION_QUEUE_NAME);
 
-    this.carCheck.init();
+    // this.carCheck.init();
     this.bot.start();
     console.log('bot started');
 

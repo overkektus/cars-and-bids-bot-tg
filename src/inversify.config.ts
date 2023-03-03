@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Container } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
-import { Connection, ConnectOptions } from "mongoose";
+import { Connection, ConnectOptions, FilterQuery, QueryOptions } from "mongoose";
 
 import { TYPES } from './types';
 import { IConfigService } from './services/config/config.interface';
@@ -25,6 +25,10 @@ import { INotifyService } from "./services/notify/notify.interface";
 import { NotifyService } from "./services/notify/notify.service";
 import { IDatabaseService } from "./services/db/database.interface";
 import { DatabaseService } from "./services/db/database.service";
+import { CarModel } from "./models/car.model";
+import { ICar } from "./models/car.interface";
+import { IModelService } from "./services/car/model.interface";
+import { CarService } from "./services/car/car.service";
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);
@@ -36,6 +40,8 @@ container.bind<ILogger>(TYPES.ConsoleLogger).to(ConsoleLogger).inSingletonScope(
 container.bind<Command>(TYPES.AddCommand).to(AddCommand);
 container.bind<Command>(TYPES.CarListCommand).to(CarListCommand);
 container.bind<Command>(TYPES.StartCommand).to(StartCommand);
+container.bind<typeof CarModel>(TYPES.CarModel).toConstantValue(CarModel);
+container.bind<IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>>(TYPES.CarService).to(CarService).inSingletonScope();
 container.bind<INotifyService>(TYPES.Notify).to(NotifyService);
 container.bind<IDatabaseService<Connection, ConnectOptions>>(TYPES.Database).to(DatabaseService).inRequestScope();
 

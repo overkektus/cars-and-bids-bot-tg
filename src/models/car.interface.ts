@@ -23,8 +23,9 @@ export interface INotificationMessage {
 }
 
 export interface ICar {
+  id: string;
   userId: number;
   url: string;
   carTitle: string;
-  lastEventId: string;
+  lastEventId?: string;
 }

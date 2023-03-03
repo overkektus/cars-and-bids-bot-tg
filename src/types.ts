@@ -10,6 +10,8 @@ const TYPES = {
   CarListCommand: Symbol.for('CarListCommand'),
   StartCommand: Symbol.for('StartCommand'),
   Database: Symbol.for('Database'),
+  CarModel: Symbol.for('CarModel'),
+  CarService: Symbol.for('CarService'),
 };
 
 export { TYPES };

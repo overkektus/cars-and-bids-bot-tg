@@ -1,17 +1,18 @@
 import { inject, injectable } from "inversify";
 import nodeCron from "node-cron";
 import { Bot as GrammyBot } from 'grammy';
+import { FilterQuery, QueryOptions } from "mongoose";
 
 import { Cron } from "./cron";
 import { TYPES } from '../types';
 import { IConfigService } from "../services/config/config.interface";
 import { IMQ } from "../services/mq/mq.interface";
 import { CHECK_QUEUE_NAME } from "../constants";
-import carModel from "../models/car.model";
 import { ConsumerMessageType } from "../services/mq/rabbitMQ.service";
-import { INotificationMessage } from "../models/car.interface";
+import { ICar, INotificationMessage } from "../models/car.interface";
 import { IBot } from "../bot/bot.interface";
 import { BotContext } from "../bot/bot.context";
+import { IModelService } from "../services/car/model.interface";
 
 @injectable()
 export class CarCheck extends Cron {
@@ -22,6 +23,7 @@ export class CarCheck extends Cron {
     @inject(TYPES.Config) public config: IConfigService,
     @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
     @inject(TYPES.Bot) public bot: IBot<GrammyBot<BotContext>>,
+    @inject(TYPES.CarService) public carService: IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>,
   ) {
     super();
     this.cronExpression = config.get('CRON_CAR_EXPRESSION');
@@ -31,12 +33,12 @@ export class CarCheck extends Cron {
 
   private async task(): Promise<void> {
     console.log('task')
-    const car = await carModel.findById("63fe318119621afe8f950244");
+    const car = await this.carService.findById("63fe318119621afe8f950244");
     this.rabbitMQ.sendData(CHECK_QUEUE_NAME, car?.id);
   }
 
   public async notification(message: INotificationMessage): Promise<void> {
-    const car = await carModel.findById(message.carId);
+    const car = await this.carService.findById(message.carId);
 
     if (!car) {
       console.log('car not found');

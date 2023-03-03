@@ -1,26 +1,36 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
 import { Menu, MenuRange, } from "@grammyjs/menu";
 import { createConversation } from '@grammyjs/conversations';
+import { FilterQuery, QueryOptions } from 'mongoose';
 
 import { BotContext, BotConversation } from "../bot.context";
 import { Command } from "./command";
-import carModel from '../../models/car.model';
+import { ICar } from '../../models/car.interface';
+import { IModelService } from '../../services/car/model.interface';
+import { TYPES } from '../../types';
 
 const carPerPage: number = 3;
 
 @injectable()
 export class CarListCommand extends Command {
+  constructor(
+    @inject(TYPES.CarService) public carService: IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>,
+  ) {
+    super();
+  }
+
   public carMenu: Menu<BotContext> = new Menu<BotContext>('car')
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
-      const currentCar = (await carModel.findById(ctx.session.carListMenu.currentCarId))!;
+      const currentCar = (await this.carService.findById(ctx.session.carListMenu.currentCarId!))!;
       range.text(currentCar.carTitle);
     }).row()
     .text('back', (ctx) => ctx.menu.back())
     .text('update')
     .text('delete', async (ctx) => {
-      await carModel.findByIdAndDelete(ctx.session.carListMenu.currentCarId);
-      const carCount = await carModel.count({ userId: ctx.from?.id });
+      const car = await this.carService.findById(ctx.session.carListMenu.currentCarId!);
+      await this.carService.delete(car!.id);
+      const carCount = await this.carService.count({ userId: ctx.from?.id });
       const isLastCarInPage = !(carCount % carPerPage);
       
       if (isLastCarInPage && carCount > 0) ctx.session.carListMenu.currentPage--;
@@ -31,7 +41,7 @@ export class CarListCommand extends Command {
   public carListMenu: Menu<BotContext> = new Menu<BotContext>('car-list')
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
       const offset = (ctx.session.carListMenu.currentPage - 1) * carPerPage;
-      const carList = await carModel.find({ userId: ctx.from?.id }).skip(offset).limit(carPerPage);
+      const carList = await this.carService.find({ userId: ctx.from?.id }, { limit: carPerPage, skip: offset });
       carList.forEach(car => {
         range
           .submenu(car.carTitle, 'car', (ctx) => ctx.session.carListMenu.currentCarId = car.id)
@@ -47,12 +57,12 @@ export class CarListCommand extends Command {
       }
     })
     .text(async (ctx) => {
-      const carCount = await carModel.count({ userId: ctx.from?.id });
+      const carCount = await this.carService.count({ userId: ctx.from?.id });
       const pages = Math.ceil(carCount / carPerPage);
       return `${ctx.session.carListMenu.currentPage}/${pages}`;
     })
     .text(">", async (ctx) => {
-      const carCount = await carModel.count({ userId: ctx.from?.id });
+      const carCount = await this.carService.count({ userId: ctx.from?.id });
       const pages = Math.ceil(carCount / carPerPage);
       if (ctx.session.carListMenu.currentPage !== pages) {
         ctx.session.carListMenu.currentPage++;
@@ -60,10 +70,6 @@ export class CarListCommand extends Command {
       }
     })
     .row();
-
-  constructor() {
-    super();
-  }
 
   public init(bot: GrammyBot<BotContext>): void {
     this.carListMenu.register(this.carMenu);
@@ -74,7 +80,7 @@ export class CarListCommand extends Command {
   }
 
   private async listOfObservableCars(conversation: BotConversation, ctx: BotContext): Promise<void> {
-    const carList = await carModel.find({ userId: ctx.from?.id });
+    const carList = await this.carService.find({ userId: ctx.from?.id });
     if (carList.length === 0) {
       await ctx.reply('No active tracking found. To track the car, start a new /add 🔎');
     } else {

@@ -2,21 +2,24 @@
 import { inject, injectable } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
 import { createConversation } from '@grammyjs/conversations';
+import { FilterQuery, QueryOptions } from 'mongoose';
 import axios from 'axios';
 import { load } from 'cheerio';
 
 import { BotContext, BotConversation } from "../bot.context";
-import carModel from '../../models/car.model';
 import { Command } from "./command";
 import { IMQ } from '../../services/mq/mq.interface';
 import { TYPES } from '../../types';
 import { INITIAL_QUEUE_NAME } from '../../constants';
 import { ConsumerMessageType } from '../../services/mq/rabbitMQ.service';
+import { IModelService } from '../../services/car/model.interface';
+import { ICar } from '../../models/car.interface';
 
 @injectable()
 export class AddCommand extends Command {
   constructor(
-    @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>
+    @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
+    @inject(TYPES.CarService) public carService: IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>,
   ) {
     super();
   }
@@ -28,7 +31,7 @@ export class AddCommand extends Command {
   }
 
   private async addNewCarConversation(conversation: BotConversation, ctx: BotContext): Promise<void> {
-    const userId = ctx.from?.id;
+    const userId = ctx.from!.id;
     let isDublicate: boolean = false;
     let carURL: string = '';
 
@@ -36,14 +39,14 @@ export class AddCommand extends Command {
     do {
       carURL = (await conversation.wait()).message?.text!;
       // TODO: add URL validation
-      isDublicate = !!await carModel.count({ url: carURL, userId });
+      isDublicate = !!await this.carService.count({ url: carURL, userId });
       if (isDublicate) {
         await ctx.reply('Already exist. Send another URL');
       }
     } while(isDublicate);
     const carTitle = await this.grabCarTitle(carURL);
     this.rabbitMQ.sendData<String>(INITIAL_QUEUE_NAME, carURL);
-    await carModel.create({ url: carURL, userId, carTitle });
+    await this.carService.create({ url: carURL, userId, carTitle });
     ctx.reply(`${carTitle} was succesfully added to list.✅`);
   }
 

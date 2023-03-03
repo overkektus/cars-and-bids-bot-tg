@@ -1,12 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema, model, Model } from "mongoose";
 
-import { ICar, ThreadEvent } from "./car.interface";
+import { ICar } from "./car.interface";
 
-const CarSchema: Schema = new Schema({
+interface ICarModel extends Model<ICar> {}
+
+const carSchema: Schema = new Schema<ICar, ICarModel>({
   url: { type: String, required: true },
   userId: { type: Number, require: true },
   carTitle: { type: String, require: true },
   lastEventId: { type: String }
 });
 
-export default mongoose.model<ICar>('Car', CarSchema);
+export const CarModel = model<ICar>('Car', carSchema);
