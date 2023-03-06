@@ -1,19 +1,20 @@
 import { injectable } from 'inversify';
-import { Connection, ConnectOptions, createConnection } from "mongoose";
+import  mongoose, { ConnectOptions, Mongoose } from "mongoose";
 
 import { IDatabaseService } from './database.interface';
 
 @injectable()
-export class DatabaseService implements IDatabaseService<ConnectOptions, ConnectOptions> {
-  private connection!: Connection;
+export class DatabaseService implements IDatabaseService<Mongoose, ConnectOptions> {
+  private connection!: Mongoose;
 
-  async connect(uri: string, options?: ConnectOptions): Promise<Connection> {
+  async connect(uri: string, options?: ConnectOptions): Promise<Mongoose> {
     try {
       if (this.connection) {
         return this.connection;
       }
 
-      this.connection = await createConnection(uri, options) as Connection;
+      await mongoose.set('strictQuery', true);
+      this.connection = await mongoose.connect(uri, options);
 
       console.log('Connected to MongoDB');
 
@@ -27,7 +28,7 @@ export class DatabaseService implements IDatabaseService<ConnectOptions, Connect
   async disconnect(): Promise<void> {
     try {
       if (this.connection) {
-        await this.connection.close();
+        await this.connection.disconnect();
         console.log('Disconnected from MongoDB');
       }
     } catch(error) {
