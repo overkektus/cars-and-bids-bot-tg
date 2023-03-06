@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { Bot as GrammyBot } from 'grammy';
-import { Connection, ConnectOptions, Model, model } from "mongoose";
+import { ConnectOptions, Mongoose } from "mongoose";
 
 import { IApp } from "./app.interface";
 import { BotContext } from "./bot/bot.context";
@@ -22,7 +22,7 @@ export class App implements IApp {
     @inject(TYPES.Config) public config: IConfigService,
     @inject(TYPES.CarCheck) public carCheck: Cron,
     @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
-    @inject(TYPES.Database) public dbService: IDatabaseService<Connection, ConnectOptions>,
+    @inject(TYPES.Database) public dbService: IDatabaseService<Mongoose, ConnectOptions>,
     @inject(TYPES.Notify) public notifyService: INotifyService,
   ) { }
 

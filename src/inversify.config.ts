@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Container } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
-import { Connection, ConnectOptions, FilterQuery, QueryOptions } from "mongoose";
+import { ConnectOptions, FilterQuery, Mongoose, QueryOptions } from "mongoose";
 
 import { TYPES } from './types';
 import { IConfigService } from './services/config/config.interface';
@@ -43,6 +43,6 @@ container.bind<Command>(TYPES.StartCommand).to(StartCommand);
 container.bind<typeof CarModel>(TYPES.CarModel).toConstantValue(CarModel);
 container.bind<IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>>(TYPES.CarService).to(CarService).inSingletonScope();
 container.bind<INotifyService>(TYPES.Notify).to(NotifyService);
-container.bind<IDatabaseService<Connection, ConnectOptions>>(TYPES.Database).to(DatabaseService).inRequestScope();
+container.bind<IDatabaseService<Mongoose, ConnectOptions>>(TYPES.Database).to(DatabaseService).inRequestScope();
 
 export { container };

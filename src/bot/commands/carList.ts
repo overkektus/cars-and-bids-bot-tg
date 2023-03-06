@@ -22,14 +22,14 @@ export class CarListCommand extends Command {
 
   public carMenu: Menu<BotContext> = new Menu<BotContext>('car')
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
-      const currentCar = (await this.carService.findById(ctx.session.carListMenu.currentCarId!))!;
-      range.text(currentCar.carTitle);
+      const currentCar = await this.carService.findById(ctx.session.carListMenu.currentCarId!);
+      range.text(currentCar!.carTitle);
     }).row()
     .text('back', (ctx) => ctx.menu.back())
     .text('update')
     .text('delete', async (ctx) => {
       const car = await this.carService.findById(ctx.session.carListMenu.currentCarId!);
-      await this.carService.delete(car!.id);
+      await this.carService.delete(car!._id);
       const carCount = await this.carService.count({ userId: ctx.from?.id });
       const isLastCarInPage = !(carCount % carPerPage);
       
@@ -42,9 +42,10 @@ export class CarListCommand extends Command {
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
       const offset = (ctx.session.carListMenu.currentPage - 1) * carPerPage;
       const carList = await this.carService.find({ userId: ctx.from?.id }, { limit: carPerPage, skip: offset });
+      console.log(carList);
       carList.forEach(car => {
         range
-          .submenu(car.carTitle, 'car', (ctx) => ctx.session.carListMenu.currentCarId = car.id)
+          .submenu(car.carTitle, 'car', (ctx) => ctx.session.carListMenu.currentCarId = car._id)
           .row();
       });
       // TODO: check if it's not empty

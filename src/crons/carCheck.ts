@@ -34,7 +34,7 @@ export class CarCheck extends Cron {
   private async task(): Promise<void> {
     console.log('task')
     const car = await this.carService.findById("63fe318119621afe8f950244");
-    this.rabbitMQ.sendData(CHECK_QUEUE_NAME, car?.id);
+    this.rabbitMQ.sendData(CHECK_QUEUE_NAME, car?._id);
   }
 
   public async notification(message: INotificationMessage): Promise<void> {

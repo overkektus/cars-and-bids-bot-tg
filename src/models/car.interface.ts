@@ -23,7 +23,7 @@ export interface INotificationMessage {
 }
 
 export interface ICar {
-  id: string;
+  _id: string;
   userId: number;
   url: string;
   carTitle: string;
