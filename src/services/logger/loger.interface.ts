@@ -1,5 +1,4 @@
 export interface ILogger {
-  log(scope: string, text: string): void;
-  warn(scope: string,text: string): void;
-  error(scope: string, text: string): void;
+  log(message: string, data?: any): void;
+  error(message: string, error?: Error): void;
 }

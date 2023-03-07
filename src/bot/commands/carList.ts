@@ -9,6 +9,7 @@ import { Command } from "./command";
 import { ICar } from '../../models/car.interface';
 import { IModelService } from '../../services/car/model.interface';
 import { TYPES } from '../../types';
+import { ILogger } from '../../services/logger/loger.interface';
 
 const carPerPage: number = 3;
 
@@ -42,7 +43,6 @@ export class CarListCommand extends Command {
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
       const offset = (ctx.session.carListMenu.currentPage - 1) * carPerPage;
       const carList = await this.carService.find({ userId: ctx.from?.id }, { limit: carPerPage, skip: offset });
-      console.log(carList);
       carList.forEach(car => {
         range
           .submenu(car.carTitle, 'car', (ctx) => ctx.session.carListMenu.currentCarId = car._id)

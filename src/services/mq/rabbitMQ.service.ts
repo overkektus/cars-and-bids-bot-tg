@@ -1,7 +1,9 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { Connection, Channel, ConsumeMessage, connect } from 'amqplib';
 
 import { IMQ } from './mq.interface';
+import { TYPES } from '../../types';
+import { ILogger } from '../logger/loger.interface';
 
 export type ConsumerMessageType = ConsumeMessage | null;
 
@@ -9,6 +11,8 @@ export type ConsumerMessageType = ConsumeMessage | null;
 export class RabbitMQ implements IMQ<ConsumerMessageType> {
   private connectionAMPQ!: Connection;
   private channelAMPQ!: Channel;
+
+  constructor(@inject(TYPES.LoggerService) public logger: ILogger) { }
   
   public accept(data: ConsumerMessageType): void {
     if (data) {
@@ -21,9 +25,9 @@ export class RabbitMQ implements IMQ<ConsumerMessageType> {
       this.connectionAMPQ = await connect(uri);
       this.channelAMPQ = await this.connectionAMPQ.createChannel();
 
-      console.log('rabbitMQ connected');
+      this.logger.log('rabbitMQ connected');
     } catch(error) {
-      console.error('Error connecting to RabbitMQ:', error);
+      this.logger.error(String(error));
       throw error;
     }
   }
@@ -33,7 +37,7 @@ export class RabbitMQ implements IMQ<ConsumerMessageType> {
       await this.channelAMPQ.close();
       await this.connectionAMPQ.close();
     } catch(error) {
-      console.error('Error disconnecting from RabbitMQ:', error);
+      this.logger.error(String(error));
       throw error;
     }
   }

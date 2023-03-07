@@ -1,5 +1,7 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import  mongoose, { ConnectOptions, Mongoose } from "mongoose";
+import { TYPES } from '../../types';
+import { ILogger } from '../logger/loger.interface';
 
 import { IDatabaseService } from './database.interface';
 
@@ -7,7 +9,9 @@ import { IDatabaseService } from './database.interface';
 export class DatabaseService implements IDatabaseService<Mongoose, ConnectOptions> {
   private connection!: Mongoose;
 
-  async connect(uri: string, options?: ConnectOptions): Promise<Mongoose> {
+  constructor(@inject(TYPES.LoggerService) public logger: ILogger) { }
+
+  public async connect(uri: string, options?: ConnectOptions): Promise<Mongoose> {
     try {
       if (this.connection) {
         return this.connection;
@@ -16,11 +20,11 @@ export class DatabaseService implements IDatabaseService<Mongoose, ConnectOption
       await mongoose.set('strictQuery', true);
       this.connection = await mongoose.connect(uri, options);
 
-      console.log('Connected to MongoDB');
+      this.logger.log('Connected to MongoDB');
 
       return this.connection;
     } catch(error) {
-      console.error('Error connecting to MongoDB:', error);
+      this.logger.error(String(error));
       throw error;
     }
   }
@@ -29,10 +33,10 @@ export class DatabaseService implements IDatabaseService<Mongoose, ConnectOption
     try {
       if (this.connection) {
         await this.connection.disconnect();
-        console.log('Disconnected from MongoDB');
+        this.logger.log('Disconnected from MongoDB');
       }
     } catch(error) {
-      console.error('Error disconnecting from MongoDB:', error);
+      this.logger.error(String(error));
       throw error;
     }
   }

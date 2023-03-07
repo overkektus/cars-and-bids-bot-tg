@@ -4,10 +4,14 @@ import { Model, FilterQuery, QueryOptions } from 'mongoose';
 import { IModelService } from './model.interface';
 import { ICar } from '../../models/car.interface';
 import { TYPES } from '../../types';
+import { ILogger } from '../logger/loger.interface';
 
 @injectable()
 export class CarService implements IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>> {
-  constructor(@inject(TYPES.CarModel) private readonly carModel: Model<ICar>) { }
+  constructor(
+    @inject(TYPES.CarModel) private readonly carModel: Model<ICar>,
+    @inject(TYPES.LoggerService) public logger: ILogger
+  ) { }
 
   public async create(data: Omit<ICar, 'id'>): Promise<ICar> {
     const createdCar = new this.carModel(data);
@@ -15,6 +19,7 @@ export class CarService implements IModelService<ICar, FilterQuery<ICar>, QueryO
   }
 
   public async findById(id: string): Promise<ICar | null> {
+    this.logger.log('find car ', id);
     return this.carModel.findById(id).lean();
   }
 

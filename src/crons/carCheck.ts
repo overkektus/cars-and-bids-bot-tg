@@ -13,6 +13,7 @@ import { ICar, INotificationMessage } from "../models/car.interface";
 import { IBot } from "../bot/bot.interface";
 import { BotContext } from "../bot/bot.context";
 import { IModelService } from "../services/car/model.interface";
+import { ILogger } from "../services/logger/loger.interface";
 
 @injectable()
 export class CarCheck extends Cron {
@@ -24,6 +25,7 @@ export class CarCheck extends Cron {
     @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
     @inject(TYPES.Bot) public bot: IBot<GrammyBot<BotContext>>,
     @inject(TYPES.CarService) public carService: IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>,
+    @inject(TYPES.LoggerService) public logger: ILogger
   ) {
     super();
     this.cronExpression = config.get('CRON_CAR_EXPRESSION');
@@ -32,7 +34,7 @@ export class CarCheck extends Cron {
   }
 
   private async task(): Promise<void> {
-    console.log('task')
+    this.logger.log("task");
     const car = await this.carService.findById("63fe318119621afe8f950244");
     this.rabbitMQ.sendData(CHECK_QUEUE_NAME, car?._id);
   }
@@ -41,7 +43,7 @@ export class CarCheck extends Cron {
     const car = await this.carService.findById(message.carId);
 
     if (!car) {
-      console.log('car not found');
+      this.logger.log("car not found");
       return;
     }
 

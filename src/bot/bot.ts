@@ -7,6 +7,7 @@ import { IBot } from './bot.interface';
 import { Command } from './commands/command';
 import { IConfigService } from '../services/config/config.interface';
 import { TYPES } from '../types';
+import { ILogger } from '../services/logger/loger.interface';
 
 @injectable()
 export class Bot implements IBot<GrammyBot<BotContext>> {
@@ -18,6 +19,7 @@ export class Bot implements IBot<GrammyBot<BotContext>> {
     @inject(TYPES.StartCommand) public startCommand: Command,
     @inject(TYPES.AddCommand) public addCommand: Command,
     @inject(TYPES.CarListCommand) public carListCommand: Command,
+    @inject(TYPES.LoggerService) public logger: ILogger,
   ) {
     this.bot = new GrammyBot<BotContext>(config.get('TOKEN'));
     this.bot.use(session({
@@ -31,7 +33,7 @@ export class Bot implements IBot<GrammyBot<BotContext>> {
   }
 
   private async catchUnknownButtonEvents(ctx: BotContext) {
-    console.log("Unknown button event with payload", ctx.callbackQuery?.data);
+    this.logger.error("Unknown button event with payload", new Error(ctx.callbackQuery?.data));
     await ctx.answerCallbackQuery(); // remove loading animation
   }
 
