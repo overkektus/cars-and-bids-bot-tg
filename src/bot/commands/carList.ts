@@ -35,6 +35,10 @@ export class CarListCommand extends Command {
       const isLastCarInPage = !(carCount % carPerPage);
       
       if (isLastCarInPage && carCount > 0) ctx.session.carListMenu.currentPage--;
+      if (isLastCarInPage && carCount === 0) {
+        await ctx.menu.close();
+        return ctx.reply('No active tracking found. To track the car, start a new /add 🔎');
+      }
       ctx.menu.update();
       ctx.menu.back();
     });
