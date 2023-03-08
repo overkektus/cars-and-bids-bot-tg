@@ -5,4 +5,4 @@ export type IMQ<C> = {
   accept(data: C): void;
   setConsume(queueName: string, consumer: (msg: C) => void): Promise<void>;
   assertQueue(queueName: string): Promise<void>;
-}
+};

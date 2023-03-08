@@ -6,7 +6,7 @@ export type SessionData = {
     currentPage: number;
     currentCarId: string | null;
   };
-}
+};
 
 export const initialSessionState: SessionData = {
   carListMenu: {

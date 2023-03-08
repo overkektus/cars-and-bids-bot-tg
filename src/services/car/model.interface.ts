@@ -4,4 +4,4 @@ export type IModelService<T, F, O> = {
   find(filter: F, options?: O): Promise<T[]>;
   count(filter: F): Promise<number>;
   delete(id: string): Promise<boolean>;
-}
+};

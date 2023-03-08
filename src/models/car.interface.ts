@@ -7,24 +7,24 @@ export type EventType =
 type BaseEvent = {
   id: string;
   type: EventType;
-}
+};
 
 type BidEvent = {
   type: 'bid';
   value: number;
-} & BaseEvent
+} & BaseEvent;
 
 type CommentEvent = {
   type: 'comment' | 'system-comment' | 'flagged-comment';
   comment: string;
-} & BaseEvent
+} & BaseEvent;
 
 export type ThreadEvent = CommentEvent | BidEvent | null;
 
 export type INotificationMessage = {
   carId: string;
   actions: Array<ThreadEvent>;
-}
+};
 
 export type ICar = {
   _id: string;
@@ -32,4 +32,4 @@ export type ICar = {
   url: string;
   carTitle: string;
   lastEventId?: string;
-}
+};
