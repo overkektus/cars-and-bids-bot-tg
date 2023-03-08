@@ -4,29 +4,29 @@ export type EventType =
   | 'system-comment'
   | 'flagged-comment';
 
-interface BaseEvent {
+type BaseEvent = {
   id: string;
   type: EventType;
 }
 
-interface BidEvent extends BaseEvent {
+type BidEvent = {
   type: 'bid';
   value: number;
-}
+} & BaseEvent
 
-interface CommentEvent extends BaseEvent {
+type CommentEvent = {
   type: 'comment' | 'system-comment' | 'flagged-comment';
   comment: string;
-}
+} & BaseEvent
 
 export type ThreadEvent = CommentEvent | BidEvent | null;
 
-export interface INotificationMessage {
+export type INotificationMessage = {
   carId: string;
   actions: Array<ThreadEvent>;
 }
 
-export interface ICar {
+export type ICar = {
   _id: string;
   userId: number;
   url: string;

@@ -1,5 +1,5 @@
 import { INotificationMessage } from '../../models/car.interface';
 
-export interface INotifyService {
+export type INotifyService = {
   notifyUser(message: INotificationMessage): Promise<void>;
 }

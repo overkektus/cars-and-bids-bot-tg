@@ -44,12 +44,12 @@ export class AddCommand extends Command {
     ctx: BotContext
   ): Promise<void> {
     const userId = ctx.from!.id;
-    let isDublicate: boolean = false;
-    let carURL: string = '';
+    let isDublicate = false;
+    let carURL: string | null;
 
     await ctx.reply('Send, please, URL of car.');
     do {
-      carURL = (await conversation.wait()).message?.text!;
+      carURL = (await conversation.wait()).message?.text ?? '';
       // TODO: add URL validation
       isDublicate = !!(await this.carService.count({ url: carURL, userId }));
       if (isDublicate) {
@@ -57,14 +57,14 @@ export class AddCommand extends Command {
       }
     } while (isDublicate);
     const carTitle = await this.grabCarTitle(carURL);
-    this.rabbitMQ.sendData<String>(INITIAL_QUEUE_NAME, carURL);
+    this.rabbitMQ.sendData<string>(INITIAL_QUEUE_NAME, carURL);
     await this.carService.create({ url: carURL, userId, carTitle });
     ctx.reply(`${carTitle} was succesfully added to list.✅`);
   }
 
   private async grabCarTitle(carURL: string): Promise<string> {
     const res = await axios.get(carURL);
-    let $ = load(res.data);
+    const $ = load(res.data);
     const carTitle = $('title')
       .text()
       .slice(0, $('title').text().indexOf('auction'))

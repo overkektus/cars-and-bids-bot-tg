@@ -5,8 +5,6 @@ import { BotContext } from '../bot.context';
 
 @injectable()
 export abstract class Command {
-  constructor() {}
-
   abstract init(bot: GrammyBot<BotContext>): void;
   abstract commandEnter(ctx: BotContext): void | Promise<void>;
 }

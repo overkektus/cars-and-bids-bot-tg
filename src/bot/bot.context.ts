@@ -1,7 +1,7 @@
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { Context, SessionFlavor } from 'grammy';
 
-export interface SessionData {
+export type SessionData = {
   carListMenu: {
     currentPage: number;
     currentCarId: string | null;

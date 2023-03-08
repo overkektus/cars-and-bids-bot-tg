@@ -15,6 +15,7 @@ export class SettingsCommand extends Command {
     bot.hears('⚙️ Settings', this.commandEnter);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   commandEnter(ctx: BotContext): void | Promise<void> {
     throw new Error('Method not implemented.');
   }

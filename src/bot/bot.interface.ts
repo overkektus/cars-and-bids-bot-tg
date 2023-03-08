@@ -1,4 +1,4 @@
-export interface IBot<B> {
+export type IBot<B> = {
   bot: B;
   start(): void;
 }

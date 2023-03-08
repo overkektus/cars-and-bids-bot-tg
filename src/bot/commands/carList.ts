@@ -9,9 +9,8 @@ import { Command } from './command';
 import { ICar } from '../../models/car.interface';
 import { IModelService } from '../../services/car/model.interface';
 import { TYPES } from '../../types';
-import { ILogger } from '../../services/logger/loger.interface';
 
-const carPerPage: number = 3;
+const carPerPage = 3;
 
 @injectable()
 export class CarListCommand extends Command {

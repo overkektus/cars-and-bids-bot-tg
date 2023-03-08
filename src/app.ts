@@ -10,7 +10,7 @@ import { NOTIFICATION_QUEUE_NAME } from './constants';
 import { Cron } from './crons/cron';
 import { IMQ } from './services/mq/mq.interface';
 import { ConsumerMessageType } from './services/mq/rabbitMQ.service';
-import { ICar, INotificationMessage } from './models/car.interface';
+import { INotificationMessage } from './models/car.interface';
 import { TYPES } from './types';
 import { INotifyService } from './services/notify/notify.interface';
 import { IDatabaseService } from './services/db/database.interface';

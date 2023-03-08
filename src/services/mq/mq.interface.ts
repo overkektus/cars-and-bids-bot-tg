@@ -1,4 +1,4 @@
-export interface IMQ<C> {
+export type IMQ<C> = {
   connect(uri: string): Promise<void>;
   closeConnection(): Promise<void>;
   sendData<T>(queueName: string, data: T): void;
