@@ -29,6 +29,7 @@ import { CarModel } from "./models/car.model";
 import { ICar } from "./models/car.interface";
 import { IModelService } from "./services/car/model.interface";
 import { CarService } from "./services/car/car.service";
+import { AuthorCommand } from "./bot/commands/author";
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);
@@ -40,6 +41,7 @@ container.bind<ILogger>(TYPES.LoggerService).to(LoggerService);
 container.bind<Command>(TYPES.AddCommand).to(AddCommand);
 container.bind<Command>(TYPES.CarListCommand).to(CarListCommand);
 container.bind<Command>(TYPES.StartCommand).to(StartCommand);
+container.bind<Command>(TYPES.AuthorCommand).to(AuthorCommand);
 container.bind<typeof CarModel>(TYPES.CarModel).toConstantValue(CarModel);
 container.bind<IModelService<ICar, FilterQuery<ICar>, QueryOptions<ICar>>>(TYPES.CarService).to(CarService).inSingletonScope();
 container.bind<INotifyService>(TYPES.Notify).to(NotifyService);

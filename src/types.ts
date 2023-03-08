@@ -7,6 +7,7 @@ const TYPES = {
   LoggerService: Symbol.for('LoggerService'),
   Notify: Symbol.for('Notify'),
   AddCommand: Symbol.for('AddCommand'),
+  AuthorCommand: Symbol.for('AuthorCommand'),
   CarListCommand: Symbol.for('CarListCommand'),
   StartCommand: Symbol.for('StartCommand'),
   Database: Symbol.for('Database'),

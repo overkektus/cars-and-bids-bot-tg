@@ -16,8 +16,9 @@ export class Bot implements IBot<GrammyBot<BotContext>> {
 
   constructor(
     @inject(TYPES.Config) public config: IConfigService,
-    @inject(TYPES.StartCommand) public startCommand: Command,
     @inject(TYPES.AddCommand) public addCommand: Command,
+    @inject(TYPES.AuthorCommand) public authorCommand: Command,
+    @inject(TYPES.StartCommand) public startCommand: Command,
     @inject(TYPES.CarListCommand) public carListCommand: Command,
     @inject(TYPES.LoggerService) public logger: ILogger,
   ) {
@@ -27,7 +28,7 @@ export class Bot implements IBot<GrammyBot<BotContext>> {
       initial: () => initialSessionState
     }));
     this.bot.use(conversations());
-    this.commands = [startCommand, addCommand, carListCommand];
+    this.commands = [addCommand, authorCommand, startCommand, carListCommand];
     this.commands.forEach((command) => command.init(this.bot));
     this.bot.on("callback_query:data", this.catchUnknownButtonEvents);
   }

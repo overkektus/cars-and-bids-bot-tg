@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { Bot } from "grammy";
+import { Menu } from "@grammyjs/menu";
 
 import { Command } from "./command";
 import { BotContext } from "../bot.context";
@@ -10,12 +11,17 @@ export class AuthorCommand extends Command {
     super();
   }
 
+  public linkListMenu: Menu<BotContext> = new Menu<BotContext>("linkList")
+    .url("💼 LinkedIn", "https://www.linkedin.com/in/egor-piskunov/")
+    .url("🐙 GitHub", "https://github.com/overkektus");
+
   public init(bot: Bot<BotContext>): void {
-    bot.command('author', this.commandEnter);
-    bot.hears('👨🏻‍💻 Author', this.commandEnter);
+    bot.use(this.linkListMenu);
+    bot.command("author", this.commandEnter.bind(this));
+    bot.hears("👨🏻‍💻 Author", this.commandEnter.bind(this));
   }
 
-  commandEnter(ctx: BotContext): void | Promise<void> {
-    throw new Error("Method not implemented.");
-  }  
+  async commandEnter(ctx: BotContext): Promise<void> {
+    await ctx.reply("My social links", { reply_markup: this.linkListMenu });
+  }
 }
