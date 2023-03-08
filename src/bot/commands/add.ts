@@ -39,27 +39,42 @@ export class AddCommand extends Command {
     bot.command('add', this.commandEnter);
   }
 
+  public async commandEnter(ctx: BotContext): Promise<void> {
+    await ctx.conversation.enter('addNewCarConversation');
+  }
+
   private async addNewCarConversation(
     conversation: BotConversation,
     ctx: BotContext
   ): Promise<void> {
     const userId = ctx.from!.id;
     let isDublicate = false;
+    let isValidURL: boolean;
     let carURL: string | null;
 
     await ctx.reply('Send, please, URL of car.');
     do {
       carURL = (await conversation.wait()).message?.text ?? '';
-      // TODO: add URL validation
+      isValidURL = this.isValidCarsAndBidsUrl(carURL);
+      if (!isValidURL) {
+        await ctx.reply('Invalid URL. Send another URL');
+        continue;
+      }
       isDublicate = !!(await this.carService.count({ url: carURL, userId }));
       if (isDublicate) {
         await ctx.reply('Already exist. Send another URL');
       }
-    } while (isDublicate);
+    } while (!isValidURL || isDublicate);
     const carTitle = await this.grabCarTitle(carURL);
     this.rabbitMQ.sendData<string>(INITIAL_QUEUE_NAME, carURL);
     await this.carService.create({ url: carURL, userId, carTitle });
     ctx.reply(`${carTitle} was succesfully added to list.✅`);
+  }
+
+  private isValidCarsAndBidsUrl(url: string) {
+    const urlRegex =
+      /^https?:\/\/carsandbids\.com\/auctions\/[a-zA-Z0-9]+\/[a-zA-Z0-9-]+$/;
+    return urlRegex.test(url);
   }
 
   private async grabCarTitle(carURL: string): Promise<string> {
@@ -70,9 +85,5 @@ export class AddCommand extends Command {
       .slice(0, $('title').text().indexOf('auction'))
       .trim();
     return carTitle;
-  }
-
-  public async commandEnter(ctx: BotContext): Promise<void> {
-    await ctx.conversation.enter('addNewCarConversation');
   }
 }
