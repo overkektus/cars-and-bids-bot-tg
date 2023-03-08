@@ -48,27 +48,32 @@ export class AddCommand extends Command {
     ctx: BotContext
   ): Promise<void> {
     const userId = ctx.from!.id;
-    let isDublicate = false;
-    let isValidURL: boolean;
-    let carURL: string | null;
 
-    await ctx.reply('Send, please, URL of car.');
-    do {
-      carURL = (await conversation.wait()).message?.text ?? '';
-      isValidURL = this.isValidCarsAndBidsUrl(carURL);
-      if (!isValidURL) {
-        await ctx.reply('Invalid URL. Send another URL');
-        continue;
-      }
-      isDublicate = !!(await this.carService.count({ url: carURL, userId }));
-      if (isDublicate) {
-        await ctx.reply('Already exist. Send another URL');
-      }
-    } while (!isValidURL || isDublicate);
+    await ctx.reply('🔗 Please send the URL of the car.');
+
+    const carURL = (await conversation.wait()).message?.text ?? '';
+
+    const isValidURL = this.isValidCarsAndBidsUrl(carURL);
+
+    if (!isValidURL) {
+      await ctx.reply('❌ Invalid URL.');
+      return;
+    }
+
     const carTitle = await this.grabCarTitle(carURL);
-    this.rabbitMQ.sendData<string>(INITIAL_QUEUE_NAME, carURL);
-    await this.carService.create({ url: carURL, userId, carTitle });
-    ctx.reply(`${carTitle} was succesfully added to list.✅`);
+
+    const existingCarCount = await this.carService.count({
+      url: carURL,
+      userId,
+    });
+    if (existingCarCount > 0) {
+      await ctx.reply(`❌ The car is already in the list.`);
+      return;
+    } else {
+      await this.carService.create({ url: carURL, userId, carTitle });
+      this.rabbitMQ.sendData<string>(INITIAL_QUEUE_NAME, carURL);
+      await ctx.reply(`✅ ${carTitle} was successfully added to the list.`);
+    }
   }
 
   private isValidCarsAndBidsUrl(url: string) {
