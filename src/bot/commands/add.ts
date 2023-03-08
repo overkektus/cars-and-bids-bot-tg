@@ -72,7 +72,7 @@ export class AddCommand extends Command {
     } else {
       await this.carService.create({ url: carURL, userId, carTitle });
       this.rabbitMQ.sendData<string>(INITIAL_QUEUE_NAME, carURL);
-      await ctx.reply(`✅ ${carTitle} was successfully added to the list.`);
+      await ctx.reply(`✅ ${carTitle} was successfully added to the /list .`);
     }
   }
 

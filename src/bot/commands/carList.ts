@@ -9,12 +9,14 @@ import { Command } from './command';
 import { ICar } from '../../models/car.interface';
 import { IModelService } from '../../services/car/model.interface';
 import { TYPES } from '../../types';
+import { ILogger } from '../../services/logger/loger.interface';
 
 const carPerPage = 3;
 
 @injectable()
 export class CarListCommand extends Command {
   constructor(
+    @inject(TYPES.LoggerService) public logger: ILogger,
     @inject(TYPES.CarService)
     public carService: IModelService<
       ICar,
@@ -30,7 +32,10 @@ export class CarListCommand extends Command {
       const currentCar = await this.carService.findById(
         ctx.session.carListMenu.currentCarId!
       );
-      range.text(currentCar!.carTitle);
+
+      if (!currentCar) return;
+
+      range.text(currentCar.carTitle);
     })
     .row()
     .text('back', (ctx) => ctx.menu.back())
@@ -39,12 +44,24 @@ export class CarListCommand extends Command {
       const car = await this.carService.findById(
         ctx.session.carListMenu.currentCarId!
       );
-      await this.carService.delete(car!._id);
+
+      if (!car) {
+        this.logger.warn(
+          "Can't find a car with id: ",
+          ctx.session.carListMenu.currentCarId
+        );
+        return ctx.menu.back();
+      }
+
+      await this.carService.delete(car._id);
+
       const carCount = await this.carService.count({ userId: ctx.from?.id });
       const isLastCarInPage = !(carCount % carPerPage);
 
-      if (isLastCarInPage && carCount > 0)
+      if (isLastCarInPage && carCount > 0) {
         ctx.session.carListMenu.currentPage--;
+      }
+
       if (isLastCarInPage && carCount === 0) {
         await ctx.menu.close();
         return ctx.reply(
@@ -57,11 +74,14 @@ export class CarListCommand extends Command {
 
   public carListMenu: Menu<BotContext> = new Menu<BotContext>('car-list')
     .dynamic(async (ctx: BotContext, range: MenuRange<BotContext>) => {
-      const offset = (ctx.session.carListMenu.currentPage - 1) * carPerPage;
       const carList = await this.carService.find(
         { userId: ctx.from?.id },
-        { limit: carPerPage, skip: offset }
+        {
+          limit: carPerPage,
+          skip: (ctx.session.carListMenu.currentPage - 1) * carPerPage,
+        }
       );
+
       carList.forEach((car) => {
         range
           .submenu(
@@ -71,7 +91,7 @@ export class CarListCommand extends Command {
           )
           .row();
       });
-      // TODO: check if it's not empty
+
       return range;
     })
     .text('<', async (ctx) => {
