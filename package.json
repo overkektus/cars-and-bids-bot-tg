@@ -51,7 +51,7 @@
     "winston": "^3.8.2"
   },
   "lint-staged": {
-    "**/*.{js,jsx}": [
+    "**/*.{ts}": [
       "eslint . --fix",
       "prettier --write ."
     ]
