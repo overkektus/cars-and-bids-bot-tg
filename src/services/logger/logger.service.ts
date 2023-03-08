@@ -23,6 +23,10 @@ export class LoggerService {
     this.logger.log('info', message, data);
   }
 
+  public warn(message: string, data?: any) {
+    this.logger.log('warn', message, data);
+  }
+
   public error(message: string, error?: Error) {
     this.logger.log('error', message, { error });
   }
