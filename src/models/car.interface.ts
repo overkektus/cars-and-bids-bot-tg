@@ -1,4 +1,8 @@
-export type EventType = 'bid' | 'comment' | 'system-comment' | 'flagged-comment';
+export type EventType =
+  | 'bid'
+  | 'comment'
+  | 'system-comment'
+  | 'flagged-comment';
 
 interface BaseEvent {
   id: string;
@@ -18,8 +22,8 @@ interface CommentEvent extends BaseEvent {
 export type ThreadEvent = CommentEvent | BidEvent | null;
 
 export interface INotificationMessage {
-  carId: string,
-  actions: Array<ThreadEvent>,
+  carId: string;
+  actions: Array<ThreadEvent>;
 }
 
 export interface ICar {

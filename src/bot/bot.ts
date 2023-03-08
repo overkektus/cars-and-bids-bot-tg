@@ -20,25 +20,30 @@ export class Bot implements IBot<GrammyBot<BotContext>> {
     @inject(TYPES.AuthorCommand) public authorCommand: Command,
     @inject(TYPES.StartCommand) public startCommand: Command,
     @inject(TYPES.CarListCommand) public carListCommand: Command,
-    @inject(TYPES.LoggerService) public logger: ILogger,
+    @inject(TYPES.LoggerService) public logger: ILogger
   ) {
     this.bot = new GrammyBot<BotContext>(config.get('TOKEN'));
-    this.bot.use(session({
-      storage: new MemorySessionStorage(),
-      initial: () => initialSessionState
-    }));
+    this.bot.use(
+      session({
+        storage: new MemorySessionStorage(),
+        initial: () => initialSessionState,
+      })
+    );
     this.bot.use(conversations());
     this.commands = [addCommand, authorCommand, startCommand, carListCommand];
     this.commands.forEach((command) => command.init(this.bot));
-    this.bot.on("callback_query:data", this.catchUnknownButtonEvents);
+    this.bot.on('callback_query:data', this.catchUnknownButtonEvents);
   }
 
   private async catchUnknownButtonEvents(ctx: BotContext) {
-    this.logger.error("Unknown button event with payload", new Error(ctx.callbackQuery?.data));
+    this.logger.error(
+      'Unknown button event with payload',
+      new Error(ctx.callbackQuery?.data)
+    );
     await ctx.answerCallbackQuery(); // remove loading animation
   }
 
   public start(): void {
     this.bot.start();
   }
-};
+}

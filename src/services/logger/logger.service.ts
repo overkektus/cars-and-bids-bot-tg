@@ -15,9 +15,7 @@ export class LoggerService {
           return `[${timestamp}] ${level}: ${message}`;
         })
       ),
-      transports: [
-        new winston.transports.Console(),
-      ],
+      transports: [new winston.transports.Console()],
     });
   }
 

@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import { config, DotenvParseOutput } from 'dotenv';
 import { injectable } from 'inversify';
 import { IConfigService } from './config.interface';

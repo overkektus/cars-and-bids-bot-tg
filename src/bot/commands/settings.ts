@@ -1,7 +1,7 @@
-import { injectable } from "inversify";
-import { Bot } from "grammy";
+import { injectable } from 'inversify';
+import { Bot } from 'grammy';
 
-import { Command } from "./command";
+import { Command } from './command';
 import { BotContext } from '../bot.context';
 
 @injectable()
@@ -16,6 +16,6 @@ export class SettingsCommand extends Command {
   }
 
   commandEnter(ctx: BotContext): void | Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }

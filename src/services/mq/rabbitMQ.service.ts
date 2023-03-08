@@ -12,8 +12,8 @@ export class RabbitMQ implements IMQ<ConsumerMessageType> {
   private connectionAMPQ!: Connection;
   private channelAMPQ!: Channel;
 
-  constructor(@inject(TYPES.LoggerService) public logger: ILogger) { }
-  
+  constructor(@inject(TYPES.LoggerService) public logger: ILogger) {}
+
   public accept(data: ConsumerMessageType): void {
     if (data) {
       this.channelAMPQ.ack(data);
@@ -26,7 +26,7 @@ export class RabbitMQ implements IMQ<ConsumerMessageType> {
       this.channelAMPQ = await this.connectionAMPQ.createChannel();
 
       this.logger.log('rabbitMQ connected');
-    } catch(error) {
+    } catch (error) {
       this.logger.error(String(error));
       throw error;
     }
@@ -36,7 +36,7 @@ export class RabbitMQ implements IMQ<ConsumerMessageType> {
     try {
       await this.channelAMPQ.close();
       await this.connectionAMPQ.close();
-    } catch(error) {
+    } catch (error) {
       this.logger.error(String(error));
       throw error;
     }
@@ -45,8 +45,11 @@ export class RabbitMQ implements IMQ<ConsumerMessageType> {
   public sendData<T>(queueName: string, data: T): void {
     this.channelAMPQ.sendToQueue(queueName, Buffer.from(JSON.stringify(data)));
   }
-  
-  public async setConsume(queueName: string, consumer: (msg: ConsumerMessageType) => void): Promise<void> {
+
+  public async setConsume(
+    queueName: string,
+    consumer: (msg: ConsumerMessageType) => void
+  ): Promise<void> {
     this.channelAMPQ.consume(queueName, consumer);
   }
 
