@@ -32,6 +32,19 @@ export class CarService
     return this.carModel.find(filter, null, options).lean();
   }
 
+  public async update(
+    filter: FilterQuery<ICar>,
+    data: Partial<ICar>,
+    options?: QueryOptions<ICar>
+  ): Promise<ICar | null> {
+    const updatedCar = await this.carModel.findOneAndUpdate(
+      filter,
+      data,
+      options
+    );
+    return updatedCar;
+  }
+
   public async delete(id: string): Promise<boolean> {
     const { acknowledged } = await this.carModel.deleteOne({ id });
     return acknowledged;
