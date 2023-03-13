@@ -9,7 +9,7 @@ import { IConfigService } from '../services/config/config.interface';
 import { IMQ } from '../services/mq/mq.interface';
 import { CHECK_QUEUE_NAME } from '../constants';
 import { ConsumerMessageType } from '../services/mq/rabbitMQ.service';
-import { ICar, INotificationMessage } from '../models/car.interface';
+import { ICar } from '../models/car.interface';
 import { IBot } from '../bot/bot.interface';
 import { BotContext } from '../bot/bot.context';
 import { IModelService } from '../services/car/model.interface';
@@ -42,28 +42,6 @@ export class CarCheck extends Cron {
     this.logger.log('task');
     const car = await this.carService.findById('63fe318119621afe8f950244');
     this.rabbitMQ.sendData(CHECK_QUEUE_NAME, car?._id);
-  }
-
-  public async notification(message: INotificationMessage): Promise<void> {
-    const car = await this.carService.findById(message.carId);
-
-    if (!car) {
-      this.logger.log('car not found');
-      return;
-    }
-
-    await Promise.all(
-      message.actions.map((action) => {
-        this.bot.bot.api.sendMessage(
-          car.userId,
-          `
-        New ${action?.type} on ${car.url} action. \n
-        ${action?.type === 'bid' && action.value}
-        ${action?.type === 'comment' && action.comment}
-      `
-        );
-      })
-    );
   }
 
   public init(): void {
