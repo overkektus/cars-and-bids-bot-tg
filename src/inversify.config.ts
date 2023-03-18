@@ -10,8 +10,6 @@ import { App } from './app';
 import { IApp } from './app.interface';
 import { Cron } from './crons/cron';
 import { CarCheck } from './crons/carCheck';
-import { IMQ } from './services/mq/mq.interface';
-import { ConsumerMessageType, RabbitMQ } from './services/mq/rabbitMQ.service';
 import { ILogger } from './services/logger/loger.interface';
 import { LoggerService } from './services/logger/logger.service';
 import { IBot } from './bot/bot.interface';
@@ -26,10 +24,12 @@ import { NotifyService } from './services/notify/notify.service';
 import { IDatabaseService } from './services/db/database.interface';
 import { DatabaseService } from './services/db/database.service';
 import { CarModel } from './models/car.model';
-import { ICar } from './models/car.interface';
+import { ICar, INotificationMessage } from './models/car.interface';
 import { IModelService } from './services/car/model.interface';
 import { CarService } from './services/car/car.service';
 import { AuthorCommand } from './bot/commands/author';
+import { IParser } from './services/parser/parser.interface';
+import { Parser } from './services/parser/parser.service';
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);
@@ -39,10 +39,6 @@ container
   .to(ConfigService)
   .inSingletonScope();
 container.bind<Cron>(TYPES.CarCheck).to(CarCheck);
-container
-  .bind<IMQ<ConsumerMessageType>>(TYPES.RabbitMQ)
-  .to(RabbitMQ)
-  .inSingletonScope();
 container.bind<ILogger>(TYPES.LoggerService).to(LoggerService);
 container.bind<Command>(TYPES.AddCommand).to(AddCommand);
 container.bind<Command>(TYPES.CarListCommand).to(CarListCommand);
@@ -55,10 +51,11 @@ container
   )
   .to(CarService)
   .inSingletonScope();
-container.bind<INotifyService>(TYPES.Notify).to(NotifyService);
+container.bind<INotifyService>(TYPES.NotifyService).to(NotifyService);
 container
   .bind<IDatabaseService<Mongoose, ConnectOptions>>(TYPES.Database)
   .to(DatabaseService)
   .inRequestScope();
+container.bind<IParser<INotificationMessage>>(TYPES.ParserService).to(Parser);
 
 export { container };

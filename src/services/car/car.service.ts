@@ -32,6 +32,10 @@ export class CarService
     return this.carModel.find(filter, null, options).lean();
   }
 
+  public async findAll(): Promise<ICar[]> {
+    return this.carModel.find().lean();
+  }
+
   public async update(
     filter: FilterQuery<ICar>,
     data: Partial<ICar>,

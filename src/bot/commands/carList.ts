@@ -35,7 +35,7 @@ export class CarListCommand extends Command {
 
       if (!currentCar) return;
 
-      range.text(currentCar.carTitle);
+      range.url(currentCar.carTitle, currentCar.url);
     })
     .row()
     .text('back', (ctx) => ctx.menu.back())

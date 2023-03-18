@@ -3,9 +3,8 @@ const TYPES = {
   Bot: Symbol.for('Bot'),
   Config: Symbol.for('Config'),
   CarCheck: Symbol.for('CarCheck'),
-  RabbitMQ: Symbol.for('RabbitMQ'),
   LoggerService: Symbol.for('LoggerService'),
-  Notify: Symbol.for('Notify'),
+  NotifyService: Symbol.for('NotifyService'),
   AddCommand: Symbol.for('AddCommand'),
   AuthorCommand: Symbol.for('AuthorCommand'),
   CarListCommand: Symbol.for('CarListCommand'),
@@ -13,6 +12,7 @@ const TYPES = {
   Database: Symbol.for('Database'),
   CarModel: Symbol.for('CarModel'),
   CarService: Symbol.for('CarService'),
+  ParserService: Symbol.for('ParserService'),
 };
 
 export { TYPES };

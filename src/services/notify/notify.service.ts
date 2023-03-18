@@ -3,7 +3,11 @@ import { Bot as GrammyBot } from 'grammy';
 import { FilterQuery, QueryOptions } from 'mongoose';
 
 import { INotifyService } from './notify.interface';
-import { ICar, INotificationMessage } from '../../models/car.interface';
+import {
+  ICar,
+  INotificationMessage,
+  ThreadEvent,
+} from '../../models/car.interface';
 import { TYPES } from '../../types';
 import { IBot } from '../../bot/bot.interface';
 import { BotContext } from '../../bot/bot.context';
@@ -35,13 +39,25 @@ export class NotifyService implements INotifyService {
       message.actions.map((action) => {
         this.bot.bot.api.sendMessage(
           car.userId,
-          `
-        New ${action?.type} on ${car.url} action. \n
-        ${action?.type === 'bid' && action.value}
-        ${action?.type === 'comment' && action.comment}
-      `
+          this.formateMessage(car, action)
         );
       })
     );
+  }
+
+  private formateMessage(car: ICar, el: ThreadEvent): string {
+    switch (el?.type) {
+      case 'bid':
+        return `
+          💰 New bid: ${el.value} on action "${car.carTitle}"
+        `;
+      case 'comment':
+      case 'system-comment':
+      case 'flagged-comment':
+        return `
+          💬 New comment: "${el.comment}" on action "${car.carTitle}"
+        `;
+    }
+    return ' ';
   }
 }

@@ -2,22 +2,19 @@ import { inject, injectable } from 'inversify';
 import { Bot as GrammyBot } from 'grammy';
 import { createConversation } from '@grammyjs/conversations';
 import { FilterQuery, QueryOptions } from 'mongoose';
-import axios from 'axios';
-import { load } from 'cheerio';
 
 import { BotContext, BotConversation } from '../bot.context';
 import { Command } from './command';
-import { IMQ } from '../../services/mq/mq.interface';
 import { TYPES } from '../../types';
-import { INITIAL_QUEUE_NAME } from '../../constants';
-import { ConsumerMessageType } from '../../services/mq/rabbitMQ.service';
 import { IModelService } from '../../services/car/model.interface';
-import { ICar } from '../../models/car.interface';
+import { ICar, INotificationMessage } from '../../models/car.interface';
+import { IParser } from '../../services/parser/parser.interface';
 
 @injectable()
 export class AddCommand extends Command {
   constructor(
-    @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
+    @inject(TYPES.ParserService)
+    public parserService: IParser<INotificationMessage>,
     @inject(TYPES.CarService)
     public carService: IModelService<
       ICar,
@@ -60,35 +57,32 @@ export class AddCommand extends Command {
       return;
     }
 
-    const carTitle = await this.grabCarTitle(carURL);
+    const isActionEnd = await this.parserService.checkIsActionEnd(carURL);
+
+    if (isActionEnd) {
+      await ctx.reply('❌ Action ended.');
+    }
+
+    const carTitle = await this.parserService.getCarTitle(carURL);
 
     const existingCarCount = await this.carService.count({
       url: carURL,
       userId,
     });
+
     if (existingCarCount > 0) {
       await ctx.reply(`❌ The car is already in the list.`);
       return;
-    } else {
-      await this.carService.create({ url: carURL, userId, carTitle });
-      this.rabbitMQ.sendData<string>(INITIAL_QUEUE_NAME, carURL);
-      await ctx.reply(`✅ ${carTitle} was successfully added to the /list .`);
     }
+
+    await this.carService.create({ url: carURL, userId, carTitle });
+    await this.parserService.setInitialLastEventId(carURL);
+    await ctx.reply(`✅ ${carTitle} was successfully added to the /list .`);
   }
 
-  private isValidCarsAndBidsUrl(url: string) {
+  private isValidCarsAndBidsUrl(url: string): boolean {
     const urlRegex =
       /^https?:\/\/carsandbids\.com\/auctions\/[a-zA-Z0-9]+\/[a-zA-Z0-9-]+$/;
     return urlRegex.test(url);
-  }
-
-  private async grabCarTitle(carURL: string): Promise<string> {
-    const res = await axios.get(carURL);
-    const $ = load(res.data);
-    const carTitle = $('title')
-      .text()
-      .slice(0, $('title').text().indexOf('auction'))
-      .trim();
-    return carTitle;
   }
 }

@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
 import mongoose, { ConnectOptions, Mongoose } from 'mongoose';
+
 import { TYPES } from '../../types';
 import { ILogger } from '../logger/loger.interface';
-
 import { IDatabaseService } from './database.interface';
 
 @injectable()

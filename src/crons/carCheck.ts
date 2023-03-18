@@ -6,14 +6,13 @@ import { FilterQuery, QueryOptions } from 'mongoose';
 import { Cron } from './cron';
 import { TYPES } from '../types';
 import { IConfigService } from '../services/config/config.interface';
-import { IMQ } from '../services/mq/mq.interface';
-import { CHECK_QUEUE_NAME } from '../constants';
-import { ConsumerMessageType } from '../services/mq/rabbitMQ.service';
-import { ICar } from '../models/car.interface';
+import { ICar, INotificationMessage } from '../models/car.interface';
 import { IBot } from '../bot/bot.interface';
 import { BotContext } from '../bot/bot.context';
 import { IModelService } from '../services/car/model.interface';
 import { ILogger } from '../services/logger/loger.interface';
+import { IParser } from '../services/parser/parser.interface';
+import { INotifyService } from '../services/notify/notify.interface';
 
 @injectable()
 export class CarCheck extends Cron {
@@ -22,7 +21,6 @@ export class CarCheck extends Cron {
 
   constructor(
     @inject(TYPES.Config) public config: IConfigService,
-    @inject(TYPES.RabbitMQ) public rabbitMQ: IMQ<ConsumerMessageType>,
     @inject(TYPES.Bot) public bot: IBot<GrammyBot<BotContext>>,
     @inject(TYPES.CarService)
     public carService: IModelService<
@@ -30,7 +28,10 @@ export class CarCheck extends Cron {
       FilterQuery<ICar>,
       QueryOptions<ICar>
     >,
-    @inject(TYPES.LoggerService) public logger: ILogger
+    @inject(TYPES.LoggerService) public logger: ILogger,
+    @inject(TYPES.ParserService)
+    public parserService: IParser<INotificationMessage>,
+    @inject(TYPES.NotifyService) public notifyService: INotifyService
   ) {
     super();
     this.cronExpression = config.get('CRON_CAR_EXPRESSION');
@@ -39,9 +40,15 @@ export class CarCheck extends Cron {
   }
 
   private async task(): Promise<void> {
-    this.logger.log('task');
-    const car = await this.carService.findById('63fe318119621afe8f950244');
-    this.rabbitMQ.sendData(CHECK_QUEUE_NAME, car?._id);
+    const auctions = await this.carService.findAll();
+    const checkResults: Array<INotificationMessage | null> = await Promise.all(
+      auctions.map((auction) =>
+        this.parserService.checkAuctionUpdates(auction._id)
+      )
+    );
+    checkResults.map((res) =>
+      res ? this.notifyService.notifyUser(res) : null
+    );
   }
 
   public init(): void {

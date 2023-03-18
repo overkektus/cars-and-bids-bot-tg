@@ -23,7 +23,7 @@ export type ThreadEvent = CommentEvent | BidEvent | null;
 
 export type INotificationMessage = {
   carId: string;
-  actions: Array<ThreadEvent>;
+  actions: ThreadEvent[];
 };
 
 export type ICar = {
