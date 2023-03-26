@@ -11,7 +11,7 @@ import {
   ThreadEvent,
 } from '../../models/car.interface';
 import { TYPES } from '../../types';
-import { IModelService } from '../car/model.interface';
+import { IModelService } from '../../interfaces/model.interface';
 import { IConfigService } from '../config/config.interface';
 import { ILogger } from '../logger/loger.interface';
 import { IParser } from './parser.interface';

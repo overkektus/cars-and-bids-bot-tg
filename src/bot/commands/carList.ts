@@ -7,7 +7,7 @@ import { FilterQuery, QueryOptions } from 'mongoose';
 import { BotContext, BotConversation } from '../bot.context';
 import { Command } from './command';
 import { ICar } from '../../models/car.interface';
-import { IModelService } from '../../services/car/model.interface';
+import { IModelService } from '../../interfaces/model.interface';
 import { TYPES } from '../../types';
 import { ILogger } from '../../services/logger/loger.interface';
 

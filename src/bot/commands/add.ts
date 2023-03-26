@@ -6,7 +6,7 @@ import { FilterQuery, QueryOptions } from 'mongoose';
 import { BotContext, BotConversation } from '../bot.context';
 import { Command } from './command';
 import { TYPES } from '../../types';
-import { IModelService } from '../../services/car/model.interface';
+import { IModelService } from '../../interfaces/model.interface';
 import { ICar, INotificationMessage } from '../../models/car.interface';
 import { IParser } from '../../services/parser/parser.interface';
 

@@ -9,7 +9,7 @@ import { IConfigService } from '../services/config/config.interface';
 import { ICar, INotificationMessage } from '../models/car.interface';
 import { IBot } from '../bot/bot.interface';
 import { BotContext } from '../bot/bot.context';
-import { IModelService } from '../services/car/model.interface';
+import { IModelService } from '../interfaces/model.interface';
 import { ILogger } from '../services/logger/loger.interface';
 import { IParser } from '../services/parser/parser.interface';
 import { INotifyService } from '../services/notify/notify.interface';

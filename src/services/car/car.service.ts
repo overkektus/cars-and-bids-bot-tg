@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Model, FilterQuery, QueryOptions } from 'mongoose';
 
-import { IModelService } from './model.interface';
+import { IModelService } from '../../interfaces/model.interface';
 import { ICar } from '../../models/car.interface';
 import { TYPES } from '../../types';
 import { ILogger } from '../logger/loger.interface';

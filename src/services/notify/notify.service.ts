@@ -11,7 +11,7 @@ import {
 import { TYPES } from '../../types';
 import { IBot } from '../../bot/bot.interface';
 import { BotContext } from '../../bot/bot.context';
-import { IModelService } from '../car/model.interface';
+import { IModelService } from '../../interfaces/model.interface';
 import { ILogger } from '../logger/loger.interface';
 
 @injectable()
