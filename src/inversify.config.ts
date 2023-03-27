@@ -15,21 +15,28 @@ import { LoggerService } from './services/logger/logger.service';
 import { IBot } from './bot/bot.interface';
 import { Bot } from './bot/bot';
 import { BotContext } from './bot/bot.context';
+
 import { Command } from './bot/commands/command';
+import { StartCommand } from './bot/commands/start';
 import { AddCommand } from './bot/commands/add';
 import { CarListCommand } from './bot/commands/carList';
-import { StartCommand } from './bot/commands/start';
+import { SettingsCommand } from './bot/commands/settings';
+import { AuthorCommand } from './bot/commands/author';
+
 import { INotifyService } from './services/notify/notify.interface';
 import { NotifyService } from './services/notify/notify.service';
 import { IDatabaseService } from './services/db/database.interface';
 import { DatabaseService } from './services/db/database.service';
-import { CarModel } from './models/car.model';
-import { ICar, INotificationMessage } from './models/car.interface';
-import { IModelService } from './services/car/model.interface';
+import { IModelService } from './interfaces/model.interface';
 import { CarService } from './services/car/car.service';
-import { AuthorCommand } from './bot/commands/author';
 import { IParser } from './services/parser/parser.interface';
 import { Parser } from './services/parser/parser.service';
+
+import { ICar, INotificationMessage } from './models/car.interface';
+import { CarModel } from './models/car.model';
+import { SettingModel } from './models/setting.model';
+import { ISetting } from './models/setting.interface';
+import { SettingService } from './services/setting/setting.service';
 
 const container = new Container();
 container.bind<IApp>(TYPES.App).to(App);
@@ -40,9 +47,10 @@ container
   .inSingletonScope();
 container.bind<Cron>(TYPES.CarCheck).to(CarCheck);
 container.bind<ILogger>(TYPES.LoggerService).to(LoggerService);
+container.bind<Command>(TYPES.StartCommand).to(StartCommand);
 container.bind<Command>(TYPES.AddCommand).to(AddCommand);
 container.bind<Command>(TYPES.CarListCommand).to(CarListCommand);
-container.bind<Command>(TYPES.StartCommand).to(StartCommand);
+container.bind<Command>(TYPES.SettingCommand).to(SettingsCommand);
 container.bind<Command>(TYPES.AuthorCommand).to(AuthorCommand);
 container.bind<typeof CarModel>(TYPES.CarModel).toConstantValue(CarModel);
 container
@@ -50,6 +58,15 @@ container
     TYPES.CarService
   )
   .to(CarService)
+  .inSingletonScope();
+container
+  .bind<typeof SettingModel>(TYPES.SettingModel)
+  .toConstantValue(SettingModel);
+container
+  .bind<IModelService<ISetting, FilterQuery<ISetting>, QueryOptions<ISetting>>>(
+    TYPES.SettingService
+  )
+  .to(SettingService)
   .inSingletonScope();
 container.bind<INotifyService>(TYPES.NotifyService).to(NotifyService);
 container

@@ -13,6 +13,7 @@ import { IBot } from '../../bot/bot.interface';
 import { BotContext } from '../../bot/bot.context';
 import { IModelService } from '../../interfaces/model.interface';
 import { ILogger } from '../logger/loger.interface';
+import { ISetting } from '../../models/setting.interface';
 
 @injectable()
 export class NotifyService implements INotifyService {
@@ -24,7 +25,13 @@ export class NotifyService implements INotifyService {
       FilterQuery<ICar>,
       QueryOptions<ICar>
     >,
-    @inject(TYPES.LoggerService) public logger: ILogger
+    @inject(TYPES.LoggerService) public logger: ILogger,
+    @inject(TYPES.SettingService)
+    public settingService: IModelService<
+      ISetting,
+      FilterQuery<ISetting>,
+      QueryOptions<ISetting>
+    >
   ) {}
 
   public async notifyUser(message: INotificationMessage): Promise<void> {
@@ -35,8 +42,16 @@ export class NotifyService implements INotifyService {
       return;
     }
 
+    const { isBidOnly } = (
+      await this.settingService.find({ userId: car.userId })
+    )[0];
+
+    const filteredActions = message.actions.filter(
+      (el) => isBidOnly && el?.type === 'bid'
+    );
+
     await Promise.all(
-      message.actions.map((action) => {
+      filteredActions.map((action) => {
         this.bot.bot.api.sendMessage(
           car.userId,
           this.formateMessage(car, action)
