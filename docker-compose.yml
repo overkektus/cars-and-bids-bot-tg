@@ -2,32 +2,25 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:5.0.15
-    container_name: mongodb
-    restart: 'no'
     ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
-    env_file:
-      .env
+      - '27017:27017'
     volumes:
       - mongodb-data:/data/db
     networks:
       - app-network
-  rabbitMQ:
-    image: rabbitmq:3.9.28-management-alpine
-    container_name: rabbitMQ
-    restart: 'no'
-    ports:
-      - 5672:5672
-      - 15672:15672
+  bot:
+    build:
+      context: .
+    depends_on:
+      - mongodb
     env_file:
-      .env
+      - .env.prod
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   mongodb-data:
-
