@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import path from 'path';
 import { config, DotenvParseOutput } from 'dotenv';
 import { injectable } from 'inversify';
 import { IConfigService } from './config.interface';
@@ -8,12 +9,15 @@ export class ConfigService implements IConfigService {
   private config: DotenvParseOutput;
 
   constructor() {
-    const { error, parsed } = config();
+    const filename = `.env.${process.env.NODE_ENV}`;
+    const { error, parsed } = config({
+      path: `${path.resolve(process.cwd(), filename)}`,
+    });
     if (error) {
-      throw new Error('Не найден файл .env');
+      throw new Error(`Не найден файл ${filename}`);
     }
     if (!parsed) {
-      throw new Error('Пустой файл .env');
+      throw new Error(`Пустой файл ${filename}`);
     }
     this.config = parsed;
   }

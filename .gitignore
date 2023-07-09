@@ -1,5 +1,5 @@
 /node_modules
 /dist
-.env
-.env.prod
+.env.development
+.env.production
 .DS_Store
