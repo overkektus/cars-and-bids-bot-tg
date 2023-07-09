@@ -32,7 +32,9 @@ export class Parser implements IParser<INotificationMessage> {
   public async setInitialLastEventId(url: string): Promise<void> {
     const LAST_ACTION_LI_SELECTOR = '.comments > .thread > li:first-of-type';
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     try {
@@ -67,7 +69,9 @@ export class Parser implements IParser<INotificationMessage> {
   ): Promise<INotificationMessage | null> {
     const LAST_THREAD_LI_SELECTOR = '.comments > .thread > li:first-of-type';
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     try {
@@ -137,7 +141,9 @@ export class Parser implements IParser<INotificationMessage> {
     const ACTION_BIDBAR_DIV_SELECTOR = '.auction-bidbar';
     const ACTION_END_DIV_SELECTOR = '.auction-ended-cta';
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     try {
